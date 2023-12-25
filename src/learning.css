@@ -41,6 +41,23 @@ ul {
   margin-right: auto;
 }
 
+.message {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 32px;
+  font-weight: 600;
+  margin-top: 100px;
+}
+
+.title {
+  cursor: default;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .header {
   margin: 40px;
 

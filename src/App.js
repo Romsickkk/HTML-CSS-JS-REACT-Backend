@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import supabase from "./supabase";
 import "./learning.css";
 
 const initialFacts = [
@@ -55,7 +56,22 @@ function Counter() {
 
 function App() {
   const [showForm, setShowForm] = useState(false);
-  const [facts, setFacts] = useState(initialFacts);
+  const [facts, setFacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(function () {
+    async function getFacts() {
+      setIsLoading(true);
+      const { data: facts, error } = await supabase
+        .from("facts")
+        .select("*")
+        .order("votesIntersting", { ascending: false })
+        .limit(1000);
+      setFacts(facts);
+      setIsLoading(false);
+    }
+    getFacts();
+  }, []);
 
   return (
     <>
@@ -68,14 +84,18 @@ function App() {
 
       <main className="main">
         <CategoryFilter />
-        <FactLis facts={facts} />
+        {isLoading ? <Loader /> : <FactLis facts={facts} />}
       </main>
     </>
   );
 }
 
+function Loader() {
+  return <p className="message">Loading...</p>;
+}
+
 function Header({ showForm, setShowForm }) {
-  const appTitle = "Today I Learnd";
+  const appTitle = "Roma learn today";
   return (
     <header className="header">
       <div className="logo">
@@ -87,7 +107,7 @@ function Header({ showForm, setShowForm }) {
             alt="Today i Learned LOGO"
           />
         </a>
-        <h1>{appTitle}</h1>
+        <h1 className="title">{appTitle}</h1>
       </div>
 
       <button
@@ -142,7 +162,7 @@ function NewFactForm({ setFacts, setShowForm }) {
         category,
         votesInteresting: 0,
         votesMindblowing: 0,
-        votesFalse: 0,
+        votesFalse: 100,
         createdIn: new Date().getFullYear(),
       };
       //4. Add. the new ifact to te UI: add te fact to state
